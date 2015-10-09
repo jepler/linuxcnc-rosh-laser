@@ -1,0 +1,55 @@
+loadrt trivkins
+loadrt motmod base_period_nsec=0 servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES
+
+loadrt hostmot2
+loadrt hm2_eth board_ip=192.168.1.121 config="num_stepgens=7"
+loadrt estop_latch
+
+setp hm2_7i92.0.gpio.027.is_output 1
+
+
+setp hm2_7i92.0.stepgen.05.steplen 2000
+setp hm2_7i92.0.stepgen.05.stepspace 2000
+setp hm2_7i92.0.stepgen.05.dirhold 800
+setp hm2_7i92.0.stepgen.05.dirsetup 800
+setp hm2_7i92.0.stepgen.05.enable 1
+setp hm2_7i92.0.stepgen.05.maxaccel 1000
+setp hm2_7i92.0.stepgen.05.maxvel 300
+setp hm2_7i92.0.stepgen.05.position-scale     -53.33333
+
+setp hm2_7i92.0.stepgen.06.steplen 2000
+setp hm2_7i92.0.stepgen.06.stepspace 2000
+setp hm2_7i92.0.stepgen.06.dirhold 800
+setp hm2_7i92.0.stepgen.06.dirsetup 800
+setp hm2_7i92.0.stepgen.06.enable 1
+setp hm2_7i92.0.stepgen.06.maxaccel 1000
+setp hm2_7i92.0.stepgen.06.maxvel 300
+setp hm2_7i92.0.stepgen.06.position-scale     53.33333
+
+net X axis.0.motor-pos-cmd => hm2_7i92.0.stepgen.05.position-cmd
+net Y axis.1.motor-pos-cmd => hm2_7i92.0.stepgen.06.position-cmd
+net Xfb axis.0.motor-pos-fb <= hm2_7i92.0.stepgen.05.position-fb
+net Yfb axis.1.motor-pos-fb <= hm2_7i92.0.stepgen.06.position-fb
+
+net Zloop axis.2.motor-pos-cmd axis.2.motor-pos-fb
+
+setp hm2_7i92.0.pwmgen.01.scale 100
+net LO motion.spindle-on => hm2_7i92.0.pwmgen.01.enable
+net LP motion.analog-out-00 => hm2_7i92.0.pwmgen.01.value
+
+addf hm2_7i92.0.read-request servo-thread
+addf hm2_7i92.0.read         servo-thread
+addf motion-command-handler  servo-thread
+addf motion-controller       servo-thread
+addf estop-latch.0           servo-thread
+addf hm2_7i92.0.write        servo-thread
+
+# create signals for tool loading loopback
+net tool-prep-loop iocontrol.0.tool-prepare => iocontrol.0.tool-prepared
+net tool-change-loop iocontrol.0.tool-change => iocontrol.0.tool-changed
+
+# A basic estop loop that only includes the hostmot watchdog.
+net user-enable iocontrol.0.user-request-enable => estop-latch.0.reset
+net enable-latch estop-latch.0.ok-out => iocontrol.0.emc-enable-in
+net watchdog hm2_7i92.0.watchdog.has_bit => estop-latch.0.fault-in
+
