@@ -43,13 +43,15 @@ print >>sys.stderr, len(data), w, h, w*h
 print "G21"
 print "M5"
 print "M68 E0 Q0"
+print "G64 P.1 Q.1"
+print "F450"
 #print "G0 X0 Y0"
 #print "G0 X%f" % TRAVEL
 #print "G0 Y%f" % TRAVEL
 #print "G0 X0"
 #print "G0 Y0"
 #print "F%d" % FEED
-print "M3"
+print "M3S1"
 for col in range(w):
     coldata = data[col : : w]
     #print >>sys.stderr, col, len(coldata)
