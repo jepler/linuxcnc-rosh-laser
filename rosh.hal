@@ -7,14 +7,15 @@ loadrt estop_latch
 
 setp hm2_7i92.0.gpio.027.is_output 1
 
+setp hm2_7i92.0.stepgen.timer-number 1
 
 setp hm2_7i92.0.stepgen.05.steplen 2000
 setp hm2_7i92.0.stepgen.05.stepspace 2000
 setp hm2_7i92.0.stepgen.05.dirhold 800
 setp hm2_7i92.0.stepgen.05.dirsetup 800
 setp hm2_7i92.0.stepgen.05.enable 1
-setp hm2_7i92.0.stepgen.05.maxaccel 1000
-setp hm2_7i92.0.stepgen.05.maxvel 300
+setp hm2_7i92.0.stepgen.05.maxaccel 2000
+setp hm2_7i92.0.stepgen.05.maxvel 200
 setp hm2_7i92.0.stepgen.05.position-scale     -53.33333
 
 setp hm2_7i92.0.stepgen.06.steplen 2000
@@ -22,8 +23,8 @@ setp hm2_7i92.0.stepgen.06.stepspace 2000
 setp hm2_7i92.0.stepgen.06.dirhold 800
 setp hm2_7i92.0.stepgen.06.dirsetup 800
 setp hm2_7i92.0.stepgen.06.enable 1
-setp hm2_7i92.0.stepgen.06.maxaccel 1000
-setp hm2_7i92.0.stepgen.06.maxvel 300
+setp hm2_7i92.0.stepgen.06.maxaccel 2000
+setp hm2_7i92.0.stepgen.06.maxvel 200
 setp hm2_7i92.0.stepgen.06.position-scale     53.33333
 
 net X axis.0.motor-pos-cmd => hm2_7i92.0.stepgen.05.position-cmd
